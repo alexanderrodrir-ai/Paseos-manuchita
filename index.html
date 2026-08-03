@@ -6,125 +6,48 @@
   <title>Paseos Esposita 🐾</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --primary: #0f4c81;
-      --primary-light: #e6f0fa;
-      --primary-mid: #b3d4f5;
-      --blue: #60a5fa;
-      --blue-dark: #1d4ed8;
-      --blue-light: #eff6ff;
-      --mint: #6ee7b7;
-      --mint-light: #d1fae5;
-      --yellow: #fbbf24;
-      --yellow-light: #fef3c7;
-      --purple: #a78bfa;
-      --purple-light: #ede9fe;
-      --text: #1e1b4b;
-      --muted: #6b7280;
-      --card: #ffffff;
-      --bg: #f0f4f8;
-      --radius: 16px;
-      --radius-sm: 10px;
+      --primary: #0f4c81; --primary-light: #e6f0fa; --primary-mid: #b3d4f5;
+      --blue: #60a5fa; --blue-dark: #1d4ed8; --blue-light: #eff6ff;
+      --mint: #6ee7b7; --mint-light: #d1fae5; --yellow: #fbbf24;
+      --yellow-light: #fef3c7; --purple: #a78bfa; --purple-light: #ede9fe;
+      --text: #1e1b4b; --muted: #6b7280; --card: #ffffff;
+      --bg: #f0f4f8; --radius: 16px; --radius-sm: 10px;
     }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; max-width: 480px; margin: 0 auto; position: relative; }
 
-    body.dark {
-      --primary-light: #1c3350;
-      --blue-light: #16233a;
-      --mint-light: #10302a;
-      --yellow-light: #3a2f14;
-      --purple-light: #2a2340;
-      --text: #e8ebf0;
-      --muted: #9aa5b1;
-      --card: #1b2432;
-      --bg: #10141c;
-    }
+    /* LOGIN SCREEN STYLES */
+    #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f4c81, #1d4ed8); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; color: white; }
+    .auth-card { background: white; color: var(--text); padding: 24px; border-radius: var(--radius); width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .auth-card h2 { font-family: 'Pacifico', cursive; color: var(--primary); text-align: center; margin-bottom: 20px; font-size: 24px; }
+    .auth-error { color: #dc2626; font-size: 13px; text-align: center; margin-bottom: 10px; min-height: 18px; }
 
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 14px;
-      max-width: 480px;
-      margin: 0 auto;
-      transition: background .2s, color .2s;
-    }
-
-    .app-header {
-      background: linear-gradient(135deg, #0f4c81, #1d4ed8);
-      color: white;
-      padding: 18px 20px 14px;
-      text-align: center;
-      position: relative;
-    }
+    /* MAIN APP STYLES */
+    #app-container { display: none; }
+    .app-header { background: linear-gradient(135deg, #0f4c81, #1d4ed8); color: white; padding: 18px 20px 14px; display: flex; justify-content: space-between; align-items: center; }
     .app-header h1 { font-family: 'Pacifico', cursive; font-size: 22px; letter-spacing: 1px; }
-    .app-header p { font-size: 12px; opacity: 0.85; margin-top: 3px; }
+    .btn-logout { background: transparent; border: 1px solid white; color: white; padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 12px; }
 
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--card); padding: 8px 14px; font-size: 11px;
-      border-bottom: 1px solid var(--primary-mid);
-      gap: 6px;
-    }
-    .topbar .tb-user { font-weight: 800; color: var(--primary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .topbar button {
-      background: var(--primary-light); border: none; color: var(--primary);
-      font-size: 13px; padding: 5px 8px; border-radius: 8px; cursor: pointer; font-weight: 700;
-    }
+    .month-selector { background: var(--primary-light); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--primary); }
+    .month-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--primary); padding: 0 10px; }
 
-    .tabs {
-      display: flex;
-      background: var(--card);
-      border-bottom: 2px solid var(--primary-mid);
-      overflow-x: auto;
-      scrollbar-width: none;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+    .tabs { display: flex; background: white; border-bottom: 2px solid var(--primary-mid); overflow-x: auto; scrollbar-width: none; position: sticky; top: 0; z-index: 100; }
     .tabs::-webkit-scrollbar { display: none; }
-    .tab-btn {
-      flex: 1; min-width: 62px;
-      padding: 10px 4px 8px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-family: 'Nunito', sans-serif;
-      font-size: 10.5px;
-      font-weight: 700;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all .2s;
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-    }
+    .tab-btn { flex: 1; min-width: 70px; padding: 10px 6px 8px; border: none; background: transparent; color: var(--muted); font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s; display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .tab-btn .tab-icon { font-size: 16px; }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
 
     .screen { display: none; padding: 16px; }
     .screen.active { display: block; }
 
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 12px rgba(15, 76, 129, 0.08);
-    }
-    .card-title {
-      font-size: 13px; font-weight: 800; color: var(--text);
-      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
-    }
+    .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(15, 76, 129, 0.08); }
+    .card-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 
-    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-    .stat-box {
-      background: var(--card);
-      border-radius: var(--radius-sm);
-      padding: 14px 12px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .stat-box { background: var(--card); border-radius: var(--radius-sm); padding: 14px 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     .stat-box .stat-val { font-size: 22px; font-weight: 800; }
     .stat-box .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
     .stat-box.primary { background: var(--primary-light); }
@@ -136,265 +59,104 @@
     .stat-box.yellow { background: var(--yellow-light); }
     .stat-box.yellow .stat-val { color: #d97706; }
 
-    .porcobrar-bar {
-      padding: 10px 14px; display:flex; justify-content:space-between; align-items:center;
-      background: var(--yellow-light); border-left: 4px solid var(--yellow);
-      border-radius: var(--radius-sm); margin-bottom: 14px;
-    }
-
     .progress-wrap { margin-bottom: 6px; }
-    .progress-bar-bg {
-      height: 18px; background: #f3f4f6; border-radius: 99px; overflow: hidden;
-    }
-    body.dark .progress-bar-bg { background: #0d131d; }
-    .progress-bar-fill {
-      height: 100%; border-radius: 99px;
-      background: linear-gradient(90deg, #0f4c81, #60a5fa);
-      transition: width .6s ease;
-    }
-    .progress-label {
-      display: flex; justify-content: space-between;
-      font-size: 11px; color: var(--muted); margin-top: 5px;
-    }
+    .progress-bar-bg { height: 18px; background: #f3f4f6; border-radius: 99px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #0f4c81, #60a5fa); transition: width .6s ease; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 5px; }
 
     .input-row { display: flex; flex-direction: column; gap: 8px; }
-    .input-row input, .input-row select {
-      padding: 10px 14px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif;
-      font-size: 14px;
-      color: var(--text);
-      background: var(--card);
-      width: 100%;
-      transition: border .2s;
-    }
-    .input-row input:focus, .input-row select:focus {
-      outline: none; border-color: var(--primary);
-    }
-    .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
-    .checkbox-row input { width: 18px; height: 18px; accent-color: var(--primary); }
+    .input-row input, .input-row select { padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 14px; color: var(--text); background: white; width: 100%; transition: border .2s; }
+    .input-row input:focus, .input-row select:focus { outline: none; border-color: var(--primary); }
 
-    .btn {
-      padding: 11px 16px;
-      border: none; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700; font-size: 14px;
-      cursor: pointer; transition: all .15s;
-      width: 100%;
-    }
+    .btn { padding: 11px 16px; border: none; border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: all .15s; width: 100%; }
     .btn:active { transform: scale(0.97); }
     .btn-primary { background: linear-gradient(135deg, #0f4c81, #1d4ed8); color: white; }
     .btn-secondary { background: var(--blue-light); color: var(--blue-dark); }
     .btn-danger { background: #fee2e2; color: #b91c1c; }
     .btn-sm { padding: 7px 12px; font-size: 12px; width: auto; }
 
-    .toast {
-      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-      background: #1e1b4b; color: white;
-      padding: 12px 20px; border-radius: 14px;
-      font-size: 13px; font-weight: 600;
-      max-width: 90%; text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-      z-index: 999; opacity: 0; pointer-events: none;
-      transition: opacity .3s;
-    }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e1b4b; color: white; padding: 12px 20px; border-radius: 14px; font-size: 13px; font-weight: 600; max-width: 90%; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.25); z-index: 999; opacity: 0; pointer-events: none; transition: opacity .3s; }
     .toast.show { opacity: 1; }
 
-    .paseo-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      background: var(--primary-light);
-      margin-bottom: 8px;
-      border-left: 4px solid var(--primary);
-    }
+    .paseo-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--primary-light); margin-bottom: 8px; border-left: 4px solid var(--primary); }
     .paseo-item .pi-name { font-weight: 700; font-size: 13px; }
     .paseo-item .pi-info { font-size: 11px; color: var(--muted); margin-top: 1px; }
     .paseo-item .pi-val { font-size: 15px; font-weight: 800; color: var(--primary); }
-    .paseo-item .pi-del, .paseo-item .pi-dup { background: none; border: none; cursor: pointer; font-size: 15px; padding: 0 3px; }
-    .pi-del { color: #f87171; }
-    .pi-dup { color: var(--blue-dark); }
-    .badge { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 99px; cursor: pointer; }
-    .badge-pagado { background: var(--mint-light); color: #059669; }
-    .badge-pendiente { background: #fee2e2; color: #b91c1c; }
+    .paseo-item .pi-del { background: none; border: none; cursor: pointer; font-size: 16px; color: #f87171; padding: 0 4px; }
 
     .meta-input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
-    .meta-input-row input {
-      flex: 1; padding: 10px 14px;
-      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif; font-size: 14px; background: var(--card); color: var(--text);
-    }
-    .meta-input-row input:focus { outline: none; border-color: var(--primary); }
+    .meta-input-row input { flex: 1; padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 14px; }
 
-    .horario-grid {
-      display: grid; grid-template-columns: 50px repeat(6, 1fr);
-      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); overflow: hidden;
-    }
-    .hor-header {
-      background: linear-gradient(135deg, #0f4c81, #1d4ed8);
-      color: white; text-align: center;
-      padding: 8px 2px; font-weight: 800; font-size: 10px;
-    }
+    .horario-grid { display: grid; grid-template-columns: 50px repeat(6, 1fr); border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); overflow: hidden; }
+    .hor-header { background: linear-gradient(135deg, #0f4c81, #1d4ed8); color: white; text-align: center; padding: 8px 2px; font-weight: 800; font-size: 10px; }
     .hor-slot { border: 0.5px solid #f0f0f0; padding: 4px; min-height: 44px; }
-    .hor-slot textarea {
-      width: 100%; border: none; background: transparent; resize: none;
-      font-family: 'Nunito', sans-serif; font-size: 10px; color: var(--text);
-      min-height: 36px; outline: none;
-    }
-    .hor-time {
-      background: var(--primary-light); font-weight: 700; color: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; padding: 4px 2px;
-    }
+    .hor-slot textarea { width: 100%; border: none; background: transparent; resize: none; font-family: 'Nunito', sans-serif; font-size: 10px; color: var(--text); min-height: 36px; outline: none; }
+    .hor-time { background: var(--primary-light); font-weight: 700; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 10px; padding: 4px 2px; }
 
-    .perro-card {
-      background: var(--primary-light);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-left: 4px solid var(--primary);
-      gap: 8px;
-    }
+    .perro-card { background: var(--primary-light); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); }
     .perro-name { font-weight: 800; font-size: 14px; }
     .perro-count { font-size: 11px; color: var(--muted); }
-    .perro-nota { font-size: 11px; color: var(--primary); margin-top: 2px; font-style: italic; }
-    .perro-total { font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; }
-    .perro-nota-btn { background: none; border: none; cursor: pointer; font-size: 13px; }
+    .perro-total { font-size: 16px; font-weight: 800; color: var(--primary); }
 
     .empty-state { text-align: center; padding: 24px 0; color: var(--muted); }
     .empty-state .empty-icon { font-size: 36px; margin-bottom: 8px; }
 
-    .tarea-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: var(--radius-sm);
-      background: var(--purple-light); margin-bottom: 8px;
-      border-left: 4px solid var(--purple);
-    }
+    .tarea-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--purple-light); margin-bottom: 8px; border-left: 4px solid var(--purple); }
     .tarea-item input[type=checkbox] { width: 18px; height: 18px; accent-color: #8b5cf6; cursor: pointer; flex-shrink: 0; }
     .tarea-item .tarea-text { flex: 1; font-size: 13px; }
     .tarea-item.done .tarea-text { text-decoration: line-through; color: var(--muted); }
     .tarea-item .tarea-del { background: none; border: none; cursor: pointer; font-size: 14px; color: #a78bfa; }
 
-    .section-label {
-      font-size: 12px; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px;
-    }
-
+    .section-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
     .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin-top: 8px; }
     .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .bar-fill {
-      width: 100%; border-radius: 6px 6px 0 0;
-      background: linear-gradient(180deg, #0f4c81, #60a5fa); min-height: 4px;
-    }
+    .bar-fill { width: 100%; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, #0f4c81, #60a5fa); min-height: 4px; }
     .bar-lbl { font-size: 9px; color: var(--muted); text-align: center; font-weight: 700; }
     .bar-val { font-size: 9px; color: var(--primary); font-weight: 800; }
 
-    .tarea-input-row {
-      display: flex; gap: 8px; align-items: center; margin-bottom: 14px;
-    }
-    .tarea-input-row select {
-      flex: 0 0 120px; padding: 10px;
-      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif; font-size: 13px; background: var(--card); color: var(--text);
-    }
-    .tarea-input-row input {
-      flex: 1; padding: 10px 14px;
-      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif; font-size: 14px; background: var(--card); color: var(--text);
-    }
-    .tarea-input-row input:focus,
-    .tarea-input-row select:focus { outline: none; border-color: var(--primary); }
-
-    .filtro-input {
-      padding: 10px 14px; border: 1.5px solid #e5e7eb;
-      border-radius: var(--radius-sm); width: 100%;
-      font-family: 'Nunito', sans-serif; font-size: 14px; margin-bottom: 14px;
-      background: var(--card); color: var(--text);
-    }
-    .filtro-input:focus { outline: none; border-color: var(--primary); }
-
-    .historial-card {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 14px; border-radius: var(--radius-sm); background: var(--primary-light);
-      margin-bottom: 8px; border-left: 4px solid var(--primary);
-    }
-
-    /* --- Auth screen --- */
-    #auth-screen {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      padding: 24px; background: linear-gradient(135deg, #0f4c81, #1d4ed8);
-    }
-    .auth-card {
-      background: var(--card); border-radius: var(--radius); padding: 24px 20px;
-      width: 100%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-    }
-    .auth-title { font-family: 'Pacifico', cursive; font-size: 26px; color: var(--primary); text-align: center; margin-bottom: 4px; }
-    .auth-sub { text-align: center; font-size: 12px; color: var(--muted); margin-bottom: 18px; }
-    .auth-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-    .auth-tab-btn {
-      flex: 1; padding: 8px; border-radius: 8px; border: none; cursor: pointer;
-      background: var(--primary-light); color: var(--primary); font-weight: 800; font-size: 12px;
-    }
-    .auth-tab-btn.active { background: var(--primary); color: white; }
-    .auth-form { display: none; flex-direction: column; gap: 10px; }
-    .auth-form.active { display: flex; }
-    .auth-form input {
-      padding: 11px 14px; border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif; font-size: 14px; background: var(--card); color: var(--text);
-    }
-    .auth-msg { font-size: 12px; font-weight: 700; color: #b91c1c; text-align: center; min-height: 16px; margin-top: 6px; }
-    .auth-hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
+    .tarea-input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+    .tarea-input-row select { flex: 0 0 120px; padding: 10px; border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 13px; background: white; }
+    .tarea-input-row input { flex: 1; padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 14px; }
+    .filtro-input { padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); width: 100%; font-family: 'Nunito', sans-serif; font-size: 14px; margin-bottom: 14px; }
   </style>
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
+<!-- AUTHENTICATION SCREEN LOCAL -->
 <div id="auth-screen">
   <div class="auth-card">
-    <div class="auth-title">🐾 Paseos Esposita</div>
-    <div class="auth-sub">Tu negocio de paseos, organizado y contigo en todos lados</div>
-
-    <div class="auth-tabs">
-      <button class="auth-tab-btn active" id="auth-tab-login" onclick="mostrarAuthTab('login')">Iniciar sesión</button>
-      <button class="auth-tab-btn" id="auth-tab-reg" onclick="mostrarAuthTab('reg')">Crear cuenta</button>
+    <h2>Paseos Esposita 🐾</h2>
+    <div id="auth-error" class="auth-error"></div>
+    <div class="input-row" id="login-form">
+      <input type="password" id="auth-pass" placeholder="Ingresa tu contraseña / PIN">
+      <button class="btn btn-primary" onclick="loginLocal()">Desbloquear App</button>
+      <p style="font-size:12px; text-align:center; color:var(--primary); cursor:pointer; margin-top:8px;" onclick="mostrarConfigurarClave()">¿No tienes clave? Configura una aquí</p>
     </div>
-
-    <div class="auth-form active" id="auth-form-login">
-      <input type="text" id="auth-user-login" placeholder="Usuario" autocomplete="username">
-      <input type="password" id="auth-pin-login" placeholder="PIN" inputmode="numeric" autocomplete="current-password">
-      <button class="btn btn-primary" onclick="login()">Entrar 💙</button>
+    
+    <div class="input-row" id="register-form" style="display:none;">
+      <p style="font-size:13px; text-align:center; margin-bottom:8px;">Crea una contraseña para proteger tu información en este dispositivo.</p>
+      <input type="password" id="reg-pass" placeholder="Crea una contraseña">
+      <input type="password" id="reg-pass-confirm" placeholder="Confirma la contraseña">
+      <button class="btn btn-primary" onclick="configurarClave()">Guardar Contraseña</button>
+      <p style="font-size:12px; text-align:center; color:var(--primary); cursor:pointer; margin-top:8px;" onclick="mostrarLogin()">Volver</p>
     </div>
-
-    <div class="auth-form" id="auth-form-reg">
-      <input type="text" id="auth-user-reg" placeholder="Elige un usuario">
-      <input type="password" id="auth-pin-reg" placeholder="Crea un PIN (mín. 4 dígitos)" inputmode="numeric">
-      <button class="btn btn-primary" onclick="registrar()">Crear cuenta 🌸</button>
-    </div>
-
-    <div class="auth-msg" id="auth-msg"></div>
-    <div class="auth-hint">Tu usuario y PIN quedan guardados en este navegador. Usa el mismo usuario y PIN en otro dispositivo, y luego importa tu respaldo (⚙️ Respaldo) para tener todo igual ahí.</div>
+    
+    <p style="margin-top:15px; font-size: 11px; text-align: center; color: var(--muted);">Modo Local: Tus datos se guardan solo en este dispositivo 💻</p>
   </div>
 </div>
 
 <!-- MAIN APP -->
-<div id="main-app" style="display:none;">
-
+<div id="app-container">
   <div class="app-header">
-    <h1>🐾 Paseos Esposita</h1>
+    <h1>🐾 Esposita</h1>
+    <button class="btn-logout" onclick="logoutLocal()">Bloquear</button>
   </div>
-
-  <div class="topbar">
-    <span class="tb-user" id="topbar-user">👤 usuario</span>
-    <button onclick="cambiarFuente(-1)" title="Letra más pequeña">A-</button>
-    <button onclick="cambiarFuente(1)" title="Letra más grande">A+</button>
-    <button onclick="toggleDark()" id="btn-dark" title="Modo oscuro">🌙</button>
-    <button onclick="exportarRespaldo()" title="Descargar respaldo">⬇️</button>
-    <button onclick="document.getElementById('import-file').click()" title="Restaurar respaldo">⬆️</button>
-    <button onclick="cerrarSesion()" title="Cerrar sesión">🚪</button>
+  
+  <div class="month-selector">
+    <button class="month-btn" onclick="cambiarMes(-1)">◀</button>
+    <span id="mes-actual-label">Mes Actual</span>
+    <button class="month-btn" onclick="cambiarMes(1)">▶</button>
   </div>
-  <input type="file" id="import-file" accept="application/json" style="display:none;" onchange="importarRespaldo(this.files[0])">
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('dashboard')">
@@ -412,15 +174,10 @@
     <button class="tab-btn" onclick="switchTab('tareas')">
       <span class="tab-icon">✅</span>Tareas
     </button>
-    <button class="tab-btn" onclick="switchTab('historial')">
-      <span class="tab-icon">🗂️</span>Historial
-    </button>
   </div>
 
   <!-- DASHBOARD -->
   <div id="screen-dashboard" class="screen active">
-    <div id="banner-hoy"></div>
-
     <div class="stat-grid">
       <div class="stat-box primary">
         <div class="stat-val" id="dash-total">$0</div>
@@ -440,11 +197,6 @@
       </div>
     </div>
 
-    <div class="porcobrar-bar">
-      <span style="font-weight:700;font-size:12px;">💰 Por cobrar (pendiente)</span>
-      <span id="dash-porcobrar" style="font-weight:800;color:#d97706;">$0</span>
-    </div>
-
     <div class="card">
       <div class="card-title">🎯 Meta del mes</div>
       <div class="meta-input-row">
@@ -460,31 +212,20 @@
           <span id="prog-meta">Meta: $0</span>
         </div>
       </div>
-      <div id="meta-msg" style="font-size:12px;color:var(--primary);font-weight:700;margin-top:8px;text-align:center;"></div>
+      <div id="meta-msg" style="font-size:12px;color:#0f4c81;font-weight:700;margin-top:8px;text-align:center;"></div>
     </div>
 
     <div class="card">
       <div class="card-title">📈 Ganancias por perro</div>
-      <div id="perros-chart">
-        <div class="empty-state"><div class="empty-icon">🐾</div><div>Aún no hay paseos</div></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📊 Tendencia mensual</div>
-      <div id="tendencia-chart">
-        <div class="empty-state" style="padding:10px 0;"><div>Cierra meses para ver tu tendencia 📈</div></div>
-      </div>
+      <div id="perros-chart"></div>
     </div>
 
     <div class="card">
       <div class="card-title">🏆 Resumen por perrito</div>
-      <div id="perros-lista">
-        <div class="empty-state"><div class="empty-icon">🐶</div><div>Agrega paseos para ver el resumen</div></div>
-      </div>
+      <div id="perros-lista"></div>
     </div>
-
-    <button class="btn btn-danger" onclick="reiniciarMes()">🗂️ Cerrar mes y archivar</button>
+    
+    <button class="btn btn-secondary" onclick="exportarBackupJSON()" style="margin-top:8px;">💾 Descargar Copia de Seguridad</button>
   </div>
 
   <!-- REGISTRO -->
@@ -497,14 +238,13 @@
         <input type="number" id="reg-valor" placeholder="Valor del paseo 💰">
         <input type="date" id="reg-fecha">
         <input type="text" id="reg-nota" placeholder="Nota opcional (ej: 1 hora, parque grande)">
-        <label class="checkbox-row"><input type="checkbox" id="reg-pagado" checked> Ya está pagado</label>
         <button class="btn btn-primary" onclick="agregarPaseo()">✨ Agregar paseo</button>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">💌 Mensaje del día</div>
-      <div id="mensaje-dia" style="font-size:13px;color:var(--primary);font-weight:700;text-align:center;line-height:1.6;padding:8px 0;">
+      <div id="mensaje-dia" style="font-size:13px;color:#0f4c81;font-weight:700;text-align:center;line-height:1.6;padding:8px 0;">
         ¡Hola amor! Registra un paseo para ver tu mensaje 🌸
       </div>
     </div>
@@ -513,16 +253,437 @@
   <!-- PASEOS -->
   <div id="screen-paseos" class="screen">
     <div class="card">
-      <div class="card-title">🔍 Filtrar por perrito</div>
+      <div class="card-title">
+        <span>🔍 Filtrar por perrito</span>
+        <button class="btn btn-secondary btn-sm" onclick="exportarExcelMejorado()">📥 Excel</button>
+      </div>
       <input type="text" class="filtro-input" id="filtro-nombre" placeholder="Buscar por nombre..." oninput="renderPaseosFiltro()">
     </div>
-    <div id="lista-paseos">
-      <div class="empty-state"><div class="empty-icon">🐕</div><div>No hay paseos registrados aún</div></div>
-    </div>
-    <button class="btn btn-secondary" onclick="exportarExcel()" style="margin-top:8px;">📥 Descargar Excel</button>
+    <div id="lista-paseos"></div>
   </div>
 
   <!-- HORARIO -->
   <div id="screen-horario" class="screen">
     <div class="card">
-      <div class="card-title">📅 Horario
+      <div class="card-title">📅 Horario semanal</div>
+      <div id="horario-grid" class="horario-grid"></div>
+      <button class="btn btn-primary" onclick="guardarHorario()" style="margin-top:12px;">💾 Guardar horario</button>
+    </div>
+  </div>
+
+  <!-- TAREAS -->
+  <div id="screen-tareas" class="screen">
+    <div class="card">
+      <div class="card-title">✅ Mis tareas de la semana</div>
+      <div class="tarea-input-row">
+        <select id="tarea-dia">
+          <option>Lunes</option><option>Martes</option><option>Miércoles</option>
+          <option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Domingo</option>
+        </select>
+        <input type="text" id="tarea-text" placeholder="¿Qué tienes que hacer?">
+      </div>
+      <button class="btn btn-primary" onclick="agregarTarea()">+ Agregar tarea</button>
+      <div id="lista-tareas" style="margin-top:14px;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ==========================================
+  // VARIABLES GLOBALES (Estado de la app local)
+  // ==========================================
+  let currentDate = new Date();
+  
+  let appData = {
+    paseos: [],
+    meta: 0,
+    horario: {},
+    tareas: []
+  };
+
+  const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const HORAS = ['8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm'];
+
+  // ==========================================
+  // AUTENTICACIÓN LOCAL
+  // ==========================================
+  function checkAuth() {
+    const isLogged = sessionStorage.getItem('esposita_logged_in');
+    const hasPassword = localStorage.getItem('esposita_password');
+    
+    if (isLogged === 'true') {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-container').style.display = 'block';
+      cargarDatosLocales();
+    } else {
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.getElementById('app-container').style.display = 'none';
+      if (!hasPassword) {
+        mostrarConfigurarClave();
+      }
+    }
+  }
+
+  function showError(msg) { document.getElementById('auth-error').textContent = msg; }
+
+  function mostrarConfigurarClave() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'flex';
+    showError('');
+  }
+
+  function mostrarLogin() {
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'flex';
+    showError('');
+  }
+
+  function configurarClave() {
+    const pass = document.getElementById('reg-pass').value;
+    const confirm = document.getElementById('reg-pass-confirm').value;
+    if (!pass) return showError("Escribe una contraseña");
+    if (pass !== confirm) return showError("Las contraseñas no coinciden");
+    
+    localStorage.setItem('esposita_password', pass);
+    sessionStorage.setItem('esposita_logged_in', 'true');
+    checkAuth();
+  }
+
+  function loginLocal() {
+    const pass = document.getElementById('auth-pass').value;
+    const savedPass = localStorage.getItem('esposita_password');
+    if (!savedPass) return showError("No hay clave configurada. Crea una abajo.");
+    if (pass === savedPass) {
+      sessionStorage.setItem('esposita_logged_in', 'true');
+      checkAuth();
+    } else {
+      showError("Contraseña incorrecta 😢");
+    }
+  }
+
+  function logoutLocal() {
+    sessionStorage.removeItem('esposita_logged_in');
+    checkAuth();
+  }
+
+  // ==========================================
+  // NAVEGACIÓN Y MESES
+  // ==========================================
+  function switchTab(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    const idx = ['dashboard','registro','paseos','horario','tareas'].indexOf(name);
+    document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+    renderUI();
+  }
+
+  function getMonthKey() {
+    const y = currentDate.getFullYear();
+    const m = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    return `${y}-${m}`;
+  }
+
+  function updateMonthLabel() {
+    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    document.getElementById('mes-actual-label').textContent = `${meses[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+  }
+
+  function cambiarMes(delta) {
+    currentDate.setMonth(currentDate.getMonth() + delta);
+    updateMonthLabel();
+    cargarDatosLocales();
+  }
+
+  // ==========================================
+  // BASE DE DATOS (Local Storage)
+  // ==========================================
+  function cargarDatosLocales() {
+    const monthKey = getMonthKey();
+    
+    // Cargar Horario y Tareas (Globales)
+    appData.horario = JSON.parse(localStorage.getItem('esposita_horario') || '{}');
+    appData.tareas = JSON.parse(localStorage.getItem('esposita_tareas') || '[]');
+
+    // Cargar Paseos y Meta (Por mes)
+    appData.paseos = JSON.parse(localStorage.getItem(`esposita_paseos_${monthKey}`) || '[]');
+    appData.meta = parseFloat(localStorage.getItem(`esposita_meta_${monthKey}`) || '0');
+
+    // Migración de datos viejos
+    const oldPaseos = localStorage.getItem('esposita_paseos');
+    if (oldPaseos && oldPaseos.length > 2) {
+        if(appData.paseos.length === 0){
+            appData.paseos = JSON.parse(oldPaseos);
+            appData.meta = parseFloat(localStorage.getItem('esposita_meta') || '0');
+            guardarDatosLocales('mes');
+        }
+        localStorage.removeItem('esposita_paseos');
+    }
+
+    updateMonthLabel();
+    renderUI();
+  }
+
+  function guardarDatosLocales(tipo) {
+    if (tipo === 'horario') {
+      localStorage.setItem('esposita_horario', JSON.stringify(appData.horario));
+    } else if (tipo === 'tareas') {
+      localStorage.setItem('esposita_tareas', JSON.stringify(appData.tareas));
+    } else if (tipo === 'mes') {
+      const monthKey = getMonthKey();
+      localStorage.setItem(`esposita_paseos_${monthKey}`, JSON.stringify(appData.paseos));
+      localStorage.setItem(`esposita_meta_${monthKey}`, appData.meta.toString());
+    }
+  }
+
+  // ==========================================
+  // LÓGICA DE NEGOCIO (UI y Eventos)
+  // ==========================================
+  function showToast(msg, dur = 3500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  function renderUI() {
+    renderDashboard();
+    renderPaseosFiltro();
+    renderHorario();
+    renderTareas();
+    actualizarSugeridos();
+  }
+
+  function agregarPaseo() {
+    const nombre = document.getElementById('reg-nombre').value.trim();
+    const valor = parseFloat(document.getElementById('reg-valor').value);
+    const fecha = document.getElementById('reg-fecha').value;
+    const nota = document.getElementById('reg-nota').value.trim();
+
+    if (!nombre || isNaN(valor) || !fecha) return showToast('¡Completa todos los campos, bae! 🐾');
+
+    appData.paseos.push({ nombre, valor, fecha, nota, id: Date.now() });
+    guardarDatosLocales('mes');
+
+    document.getElementById('reg-nombre').value = '';
+    document.getElementById('reg-valor').value = '';
+    document.getElementById('reg-nota').value = '';
+
+    const totalActual = appData.paseos.reduce((s, p) => s + p.valor, 0);
+    const msg = (appData.meta > 0 && totalActual >= appData.meta) 
+      ? '🎉 ¡LLEGASTE A TU META! ¡Eres una campeona amor! 🏆💕'
+      : '¡Paseo registrado con éxito! Estás imparable 🔥';
+    
+    document.getElementById('mensaje-dia').textContent = msg;
+    showToast('¡Paseo guardado! 🐾');
+    renderUI();
+  }
+
+  function borrarPaseo(id) {
+    if(!confirm("¿Borrar este paseo?")) return;
+    appData.paseos = appData.paseos.filter(p => p.id !== id);
+    guardarDatosLocales('mes');
+    renderUI();
+    showToast('Paseo eliminado 🗑️');
+  }
+
+  function actualizarSugeridos() {
+    const nombres = [...new Set(appData.paseos.map(p => p.nombre))];
+    document.getElementById('perros-sugeridos').innerHTML = nombres.map(n => `<option value="${n}">`).join('');
+  }
+
+  function renderDashboard() {
+    const total = appData.paseos.reduce((s, p) => s + p.valor, 0);
+    const perros = new Set(appData.paseos.map(p => p.nombre)).size;
+    const falta = Math.max(0, appData.meta - total);
+    const pct = appData.meta > 0 ? Math.min(100, Math.round(total / appData.meta * 100)) : 0;
+
+    document.getElementById('dash-total').textContent = '$' + total.toLocaleString('es-CO');
+    document.getElementById('dash-count').textContent = appData.paseos.length;
+    document.getElementById('dash-perros').textContent = perros;
+    document.getElementById('dash-falta').textContent = falta > 0 ? '$' + falta.toLocaleString('es-CO') : '¡Meta! 🎉';
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent = pct + '%';
+    document.getElementById('prog-meta').textContent = 'Meta: $' + (appData.meta || 0).toLocaleString('es-CO');
+
+    if (!document.getElementById('meta-input').value) document.getElementById('meta-input').value = appData.meta || '';
+
+    const resumen = {};
+    appData.paseos.forEach(p => { resumen[p.nombre] = (resumen[p.nombre] || 0) + p.valor; });
+    const entries = Object.entries(resumen).sort((a, b) => b[1] - a[1]);
+
+    if (entries.length === 0) {
+      document.getElementById('perros-chart').innerHTML = '<div class="empty-state"><div class="empty-icon">🐾</div><div>Aún no hay paseos este mes</div></div>';
+      document.getElementById('perros-lista').innerHTML = '';
+      return;
+    }
+
+    const maxVal = Math.max(...entries.map(e => e[1]));
+    document.getElementById('perros-chart').innerHTML = '<div class="bar-chart">' + entries.map(([n, v]) => {
+      const h = Math.max(8, Math.round(v / maxVal * 72));
+      const initials = n.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      return `<div class="bar-col"><div class="bar-val">$${Math.round(v / 1000)}k</div><div class="bar-fill" style="height:${h}px"></div><div class="bar-lbl">${initials}</div></div>`;
+    }).join('') + '</div>';
+
+    const counts = {};
+    appData.paseos.forEach(p => { counts[p.nombre] = (counts[p.nombre] || 0) + 1; });
+    document.getElementById('perros-lista').innerHTML = entries.map(([n, v]) => `
+      <div class="perro-card">
+        <div><div class="perro-name">🐶 ${n}</div><div class="perro-count">${counts[n]} paseo${counts[n] > 1 ? 's' : ''}</div></div>
+        <div class="perro-total">$${v.toLocaleString('es-CO')}</div>
+      </div>
+    `).join('');
+  }
+
+  function guardarMeta() {
+    const v = parseFloat(document.getElementById('meta-input').value);
+    if (isNaN(v) || v <= 0) return showToast('¡Pon una meta válida! 🎯');
+    appData.meta = v;
+    guardarDatosLocales('mes');
+    showToast('¡Meta guardada localmente! 💪🌟');
+    renderDashboard();
+  }
+
+  function renderPaseosFiltro() {
+    const filtro = (document.getElementById('filtro-nombre')?.value || '').toLowerCase();
+    const lista = filtro ? appData.paseos.filter(p => p.nombre.toLowerCase().includes(filtro)) : [...appData.paseos];
+    const container = document.getElementById('lista-paseos');
+
+    if (lista.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">🐕</div><div>No hay paseos registrados aún en este mes</div></div>';
+      return;
+    }
+
+    lista.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    container.innerHTML = lista.map(p => {
+      const fechaFmt = new Date(p.fecha + 'T12:00:00').toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
+      return `<div class="paseo-item">
+        <div><div class="pi-name">🐶 ${p.nombre}</div><div class="pi-info">📅 ${fechaFmt}${p.nota ? ' · ' + p.nota : ''}</div></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="pi-val">$${p.valor.toLocaleString('es-CO')}</div>
+          <button class="pi-del" onclick="borrarPaseo(${p.id})">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderHorario() {
+    const grid = document.getElementById('horario-grid');
+    let html = '<div class="hor-header"></div>';
+    DIAS.slice(0, 6).forEach(dia => { html += `<div class="hor-header">${dia.slice(0, 3)}</div>`; });
+    HORAS.forEach(hora => {
+      html += `<div class="hor-slot hor-time">${hora}</div>`;
+      DIAS.slice(0, 6).forEach(dia => {
+        const key = dia + '_' + hora;
+        const val = (appData.horario[key] || '').replace(/"/g, '&quot;');
+        html += `<div class="hor-slot"><textarea id="hor_${key}">${val}</textarea></div>`;
+      });
+    });
+    grid.innerHTML = html;
+  }
+
+  function guardarHorario() {
+    DIAS.slice(0, 6).forEach(dia => {
+      HORAS.forEach(hora => {
+        const key = dia + '_' + hora;
+        const el = document.getElementById('hor_' + key);
+        if (el) appData.horario[key] = el.value;
+      });
+    });
+    guardarDatosLocales('horario');
+    showToast('¡Horario guardado localmente! 📅');
+  }
+
+  function agregarTarea() {
+    const dia = document.getElementById('tarea-dia').value;
+    const texto = document.getElementById('tarea-text').value.trim();
+    if (!texto) return showToast('¡Escribe qué tienes que hacer! ✅');
+    appData.tareas.push({ dia, texto, done: false, id: Date.now() });
+    guardarDatosLocales('tareas');
+    document.getElementById('tarea-text').value = '';
+    renderTareas();
+    showToast('¡Tarea agregada! 💪');
+  }
+
+  function renderTareas() {
+    const container = document.getElementById('lista-tareas');
+    if (appData.tareas.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">✨</div><div>Sin tareas por ahora, ¡a descansar!</div></div>';
+      return;
+    }
+    let html = '';
+    DIAS.forEach(dia => {
+      const tareas = appData.tareas.filter(t => t.dia === dia);
+      if (tareas.length === 0) return;
+      html += `<div class="section-label" style="margin-top:12px;">📅 ${dia}</div>`;
+      tareas.forEach(t => {
+        html += `<div class="tarea-item ${t.done ? 'done' : ''}">
+          <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTarea(${t.id})">
+          <div class="tarea-text">${t.texto}</div>
+          <button class="tarea-del" onclick="borrarTarea(${t.id})">✕</button>
+        </div>`;
+      });
+    });
+    container.innerHTML = html;
+  }
+
+  function toggleTarea(id) {
+    const t = appData.tareas.find(t => t.id === id);
+    if (t) { t.done = !t.done; guardarDatosLocales('tareas'); renderTareas(); }
+  }
+
+  function borrarTarea(id) {
+    appData.tareas = appData.tareas.filter(t => t.id !== id);
+    guardarDatosLocales('tareas');
+    renderTareas();
+  }
+
+  function exportarExcelMejorado() {
+    if (appData.paseos.length === 0) return showToast('No hay paseos para exportar 🐾');
+    const total = appData.paseos.reduce((s, p) => s + p.valor, 0);
+    const resumenData = [
+      ['RESUMEN DEL MES', getMonthKey()],
+      [],
+      ['Total Ingresos', total],
+      ['Total Paseos Realizados', appData.paseos.length],
+      ['Meta Mensual', appData.meta || 0],
+      ['Progreso', appData.meta > 0 ? `${Math.round(total / appData.meta * 100)}%` : 'N/A']
+    ];
+
+    const detalleData = [['Fecha', 'Nombre del perro', 'Valor ($)', 'Nota']];
+    [...appData.paseos].sort((a, b) => new Date(a.fecha) - new Date(b.fecha)).forEach(p => {
+      detalleData.push([p.fecha, p.nombre, p.valor, p.nota || '']);
+    });
+    detalleData.push(['', '', '', '']);
+    detalleData.push(['TOTAL', '', total, '']);
+
+    const wb = XLSX.utils.book_new();
+    const wsResumen = XLSX.utils.aoa_to_sheet(resumenData);
+    const wsDetalle = XLSX.utils.aoa_to_sheet(detalleData);
+
+    wsDetalle['!cols'] = [{wch:15}, {wch:20}, {wch:12}, {wch:30}];
+    wsResumen['!cols'] = [{wch:25}, {wch:15}];
+
+    XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen');
+    XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle Paseos');
+    
+    XLSX.writeFile(wb, `Paseos_Esposita_${getMonthKey()}.xlsx`);
+  }
+
+  function exportarBackupJSON() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `Backup_Esposita_${getMonthKey()}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
+
+  document.getElementById('reg-fecha').value = currentDate.toISOString().split('T')[0];
+  checkAuth();
+</script>
+</body>
+</html>
