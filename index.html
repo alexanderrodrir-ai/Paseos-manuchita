@@ -1,167 +1,528 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Inventariando Ando</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script> <!-- Incluir la librería de SheetJS -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paseos Esposita 🐾</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    :root{
-      --blue:#1e88e5;
-      --blue-600:#154bb3;
-      --bg:#e8f6ff;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --accent:#c7e0ff;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #0f4c81;
+      --primary-light: #e6f0fa;
+      --primary-mid: #b3d4f5;
+      --blue: #60a5fa;
+      --blue-dark: #1d4ed8;
+      --blue-light: #eff6ff;
+      --mint: #6ee7b7;
+      --mint-light: #d1fae5;
+      --yellow: #fbbf24;
+      --yellow-light: #fef3c7;
+      --purple: #a78bfa;
+      --purple-light: #ede9fe;
+      --text: #1e1b4b;
+      --muted: #6b7280;
+      --card: #ffffff;
+      --bg: #f0f4f8;
+      --radius: 16px;
+      --radius-sm: 10px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; padding:18px; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background:var(--bg); color:#0f172a;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+
+    body.dark {
+      --primary-light: #1c3350;
+      --blue-light: #16233a;
+      --mint-light: #10302a;
+      --yellow-light: #3a2f14;
+      --purple-light: #2a2340;
+      --text: #e8ebf0;
+      --muted: #9aa5b1;
+      --card: #1b2432;
+      --bg: #10141c;
     }
 
-    .wrap{max-width:760px;margin:12px auto;padding:18px}
-    header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
-    h1{font-size:28px;margin:0;color:var(--blue);letter-spacing:0.6px}
-    .subtitle{color:var(--muted);font-size:13px}
-
-    .card{background:var(--card);border-radius:14px;padding:18px;border:1px solid var(--accent);box-shadow:0 8px 20px rgba(16,24,40,0.06)}
-
-    form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    label{display:block;font-weight:600;color:var(--blue);font-size:13px;margin-bottom:6px}
-    input[type=text], input[type=number], select{width:100%;padding:10px;border-radius:10px;border:1px solid #dbeafe;background:#fff;font-size:14px}
-
-    .actions{display:flex;gap:10px;margin-top:12px}
-    .btn{flex:1;padding:12px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
-    .btn.ghost{background:transparent;color:var(--blue);border:1.5px solid var(--accent)}
-    .btn.small{padding:8px;font-size:14px;border-radius:8px}
-    .btn:active{transform:translateY(1px)}
-
-    /* lista / informe */
-    #lista{margin-top:16px}
-    .item{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #eef5ff;margin-bottom:10px}
-    .meta{display:flex;gap:12px;align-items:center}
-    .badge{background:var(--accent);padding:6px 8px;border-radius:8px;font-weight:600;color:var(--blue)}
-    .info{font-size:14px}
-    .info small{display:block;color:var(--muted);font-weight:500}
-
-    .tools{display:flex;gap:8px}
-    .tool-btn{background:transparent;border:1px solid var(--blue);color:var(--blue);padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700}
-
-    /* responsive */
-    @media (max-width:520px){
-      form .row{grid-template-columns:1fr}
-      header{flex-direction:column;align-items:flex-start;gap:6px}
-      h1{font-size:22px}
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      max-width: 480px;
+      margin: 0 auto;
+      transition: background .2s, color .2s;
     }
+
+    .app-header {
+      background: linear-gradient(135deg, #0f4c81, #1d4ed8);
+      color: white;
+      padding: 18px 20px 14px;
+      text-align: center;
+      position: relative;
+    }
+    .app-header h1 { font-family: 'Pacifico', cursive; font-size: 22px; letter-spacing: 1px; }
+    .app-header p { font-size: 12px; opacity: 0.85; margin-top: 3px; }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card); padding: 8px 14px; font-size: 11px;
+      border-bottom: 1px solid var(--primary-mid);
+      gap: 6px;
+    }
+    .topbar .tb-user { font-weight: 800; color: var(--primary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .topbar button {
+      background: var(--primary-light); border: none; color: var(--primary);
+      font-size: 13px; padding: 5px 8px; border-radius: 8px; cursor: pointer; font-weight: 700;
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--card);
+      border-bottom: 2px solid var(--primary-mid);
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex: 1; min-width: 62px;
+      padding: 10px 4px 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all .2s;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .tab-btn .tab-icon { font-size: 16px; }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .screen { display: none; padding: 16px; }
+    .screen.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 12px rgba(15, 76, 129, 0.08);
+    }
+    .card-title {
+      font-size: 13px; font-weight: 800; color: var(--text);
+      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .stat-box {
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      padding: 14px 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .stat-box .stat-val { font-size: 22px; font-weight: 800; }
+    .stat-box .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .stat-box.primary { background: var(--primary-light); }
+    .stat-box.primary .stat-val { color: var(--primary); }
+    .stat-box.blue { background: var(--blue-light); }
+    .stat-box.blue .stat-val { color: var(--blue-dark); }
+    .stat-box.mint { background: var(--mint-light); }
+    .stat-box.mint .stat-val { color: #059669; }
+    .stat-box.yellow { background: var(--yellow-light); }
+    .stat-box.yellow .stat-val { color: #d97706; }
+
+    .porcobrar-bar {
+      padding: 10px 14px; display:flex; justify-content:space-between; align-items:center;
+      background: var(--yellow-light); border-left: 4px solid var(--yellow);
+      border-radius: var(--radius-sm); margin-bottom: 14px;
+    }
+
+    .progress-wrap { margin-bottom: 6px; }
+    .progress-bar-bg {
+      height: 18px; background: #f3f4f6; border-radius: 99px; overflow: hidden;
+    }
+    body.dark .progress-bar-bg { background: #0d131d; }
+    .progress-bar-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, #0f4c81, #60a5fa);
+      transition: width .6s ease;
+    }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: var(--muted); margin-top: 5px;
+    }
+
+    .input-row { display: flex; flex-direction: column; gap: 8px; }
+    .input-row input, .input-row select {
+      padding: 10px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--card);
+      width: 100%;
+      transition: border .2s;
+    }
+    .input-row input:focus, .input-row select:focus {
+      outline: none; border-color: var(--primary);
+    }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+    .checkbox-row input { width: 18px; height: 18px; accent-color: var(--primary); }
+
+    .btn {
+      padding: 11px 16px;
+      border: none; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700; font-size: 14px;
+      cursor: pointer; transition: all .15s;
+      width: 100%;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: linear-gradient(135deg, #0f4c81, #1d4ed8); color: white; }
+    .btn-secondary { background: var(--blue-light); color: var(--blue-dark); }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-sm { padding: 7px 12px; font-size: 12px; width: auto; }
+
+    .toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: #1e1b4b; color: white;
+      padding: 12px 20px; border-radius: 14px;
+      font-size: 13px; font-weight: 600;
+      max-width: 90%; text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      z-index: 999; opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .toast.show { opacity: 1; }
+
+    .paseo-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-light);
+      margin-bottom: 8px;
+      border-left: 4px solid var(--primary);
+    }
+    .paseo-item .pi-name { font-weight: 700; font-size: 13px; }
+    .paseo-item .pi-info { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .paseo-item .pi-val { font-size: 15px; font-weight: 800; color: var(--primary); }
+    .paseo-item .pi-del, .paseo-item .pi-dup { background: none; border: none; cursor: pointer; font-size: 15px; padding: 0 3px; }
+    .pi-del { color: #f87171; }
+    .pi-dup { color: var(--blue-dark); }
+    .badge { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 99px; cursor: pointer; }
+    .badge-pagado { background: var(--mint-light); color: #059669; }
+    .badge-pendiente { background: #fee2e2; color: #b91c1c; }
+
+    .meta-input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+    .meta-input-row input {
+      flex: 1; padding: 10px 14px;
+      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif; font-size: 14px; background: var(--card); color: var(--text);
+    }
+    .meta-input-row input:focus { outline: none; border-color: var(--primary); }
+
+    .horario-grid {
+      display: grid; grid-template-columns: 50px repeat(6, 1fr);
+      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm); overflow: hidden;
+    }
+    .hor-header {
+      background: linear-gradient(135deg, #0f4c81, #1d4ed8);
+      color: white; text-align: center;
+      padding: 8px 2px; font-weight: 800; font-size: 10px;
+    }
+    .hor-slot { border: 0.5px solid #f0f0f0; padding: 4px; min-height: 44px; }
+    .hor-slot textarea {
+      width: 100%; border: none; background: transparent; resize: none;
+      font-family: 'Nunito', sans-serif; font-size: 10px; color: var(--text);
+      min-height: 36px; outline: none;
+    }
+    .hor-time {
+      background: var(--primary-light); font-weight: 700; color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; padding: 4px 2px;
+    }
+
+    .perro-card {
+      background: var(--primary-light);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-left: 4px solid var(--primary);
+      gap: 8px;
+    }
+    .perro-name { font-weight: 800; font-size: 14px; }
+    .perro-count { font-size: 11px; color: var(--muted); }
+    .perro-nota { font-size: 11px; color: var(--primary); margin-top: 2px; font-style: italic; }
+    .perro-total { font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; }
+    .perro-nota-btn { background: none; border: none; cursor: pointer; font-size: 13px; }
+
+    .empty-state { text-align: center; padding: 24px 0; color: var(--muted); }
+    .empty-state .empty-icon { font-size: 36px; margin-bottom: 8px; }
+
+    .tarea-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: var(--radius-sm);
+      background: var(--purple-light); margin-bottom: 8px;
+      border-left: 4px solid var(--purple);
+    }
+    .tarea-item input[type=checkbox] { width: 18px; height: 18px; accent-color: #8b5cf6; cursor: pointer; flex-shrink: 0; }
+    .tarea-item .tarea-text { flex: 1; font-size: 13px; }
+    .tarea-item.done .tarea-text { text-decoration: line-through; color: var(--muted); }
+    .tarea-item .tarea-del { background: none; border: none; cursor: pointer; font-size: 14px; color: #a78bfa; }
+
+    .section-label {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px;
+    }
+
+    .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin-top: 8px; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bar-fill {
+      width: 100%; border-radius: 6px 6px 0 0;
+      background: linear-gradient(180deg, #0f4c81, #60a5fa); min-height: 4px;
+    }
+    .bar-lbl { font-size: 9px; color: var(--muted); text-align: center; font-weight: 700; }
+    .bar-val { font-size: 9px; color: var(--primary); font-weight: 800; }
+
+    .tarea-input-row {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 14px;
+    }
+    .tarea-input-row select {
+      flex: 0 0 120px; padding: 10px;
+      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif; font-size: 13px; background: var(--card); color: var(--text);
+    }
+    .tarea-input-row input {
+      flex: 1; padding: 10px 14px;
+      border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif; font-size: 14px; background: var(--card); color: var(--text);
+    }
+    .tarea-input-row input:focus,
+    .tarea-input-row select:focus { outline: none; border-color: var(--primary); }
+
+    .filtro-input {
+      padding: 10px 14px; border: 1.5px solid #e5e7eb;
+      border-radius: var(--radius-sm); width: 100%;
+      font-family: 'Nunito', sans-serif; font-size: 14px; margin-bottom: 14px;
+      background: var(--card); color: var(--text);
+    }
+    .filtro-input:focus { outline: none; border-color: var(--primary); }
+
+    .historial-card {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border-radius: var(--radius-sm); background: var(--primary-light);
+      margin-bottom: 8px; border-left: 4px solid var(--primary);
+    }
+
+    /* --- Auth screen --- */
+    #auth-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px; background: linear-gradient(135deg, #0f4c81, #1d4ed8);
+    }
+    .auth-card {
+      background: var(--card); border-radius: var(--radius); padding: 24px 20px;
+      width: 100%; max-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    }
+    .auth-title { font-family: 'Pacifico', cursive; font-size: 26px; color: var(--primary); text-align: center; margin-bottom: 4px; }
+    .auth-sub { text-align: center; font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+    .auth-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+    .auth-tab-btn {
+      flex: 1; padding: 8px; border-radius: 8px; border: none; cursor: pointer;
+      background: var(--primary-light); color: var(--primary); font-weight: 800; font-size: 12px;
+    }
+    .auth-tab-btn.active { background: var(--primary); color: white; }
+    .auth-form { display: none; flex-direction: column; gap: 10px; }
+    .auth-form.active { display: flex; }
+    .auth-form input {
+      padding: 11px 14px; border: 1.5px solid #e5e7eb; border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif; font-size: 14px; background: var(--card); color: var(--text);
+    }
+    .auth-msg { font-size: 12px; font-weight: 700; color: #b91c1c; text-align: center; min-height: 16px; margin-top: 6px; }
+    .auth-hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>📦 Inventariando Ando</h1>
-        <div class="subtitle">Inventario juvenil · guarda los datos en tu navegador 💾</div>
-      </div>
-      <div>
-        <button class="btn small" onclick="generarInforme()">📊 Ver Informe</button>
-        <button class="btn small" onclick="descargarExcel()">📥 Descargar Excel</button> <!-- Botón para descargar Excel -->
-      </div>
-    </header>
 
-    <div class="card">
-      <form id="form">
-        <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
-          <div style="flex:1">
-            <label>Producto</label>
-            <input id="producto" type="text" placeholder="Ej: Camiseta, Zapatillas, Remera" autocomplete="off">
-          </div>
-          <div style="width:120px">
-            <label>Cantidad</label>
-            <input id="cantidad" type="number" min="1" placeholder="1">
-          </div>
-          <div style="width:120px">
-            <label>Precio</label>
-            <input id="precio" type="number" min="0" step="0.01" placeholder="Precio del producto">
-          </div>
-        </div>
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-title">🐾 Paseos Esposita</div>
+    <div class="auth-sub">Tu negocio de paseos, organizado y contigo en todos lados</div>
 
-        <div class="row">
-          <div>
-            <label>Talla (opcional)</label>
-            <input id="talla" type="text" placeholder="M, L, 38, S...">
-          </div>
-          <div>
-            <label>&nbsp;</label>
-            <button type="button" class="btn ghost" onclick="togglePantalon()">👖 Talla pantalón</button>
-          </div>
-        </div>
-
-        <div id="pantalonSection" style="display:none;margin-top:12px">
-          <label>Talla de pantalón (libre)</label>
-          <input id="tallaPantalon" type="text" placeholder="Escribe talla (ej: 6, 28, M, S)">
-        </div>
-
-        <div class="actions">
-          <button type="button" class="btn" onclick="agregarProducto()">➕ Agregar</button>
-          <button type="button" class="btn ghost" onclick="limpiarInventario()">🧹 Limpiar</button>
-        </div>
-
-      </form>
-
-      <div id="lista"></div>
-
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="auth-tab-login" onclick="mostrarAuthTab('login')">Iniciar sesión</button>
+      <button class="auth-tab-btn" id="auth-tab-reg" onclick="mostrarAuthTab('reg')">Crear cuenta</button>
     </div>
 
-    <div id="informeContainer" style="margin-top:14px;display:none">
-      <div class="card" id="informe"></div>
+    <div class="auth-form active" id="auth-form-login">
+      <input type="text" id="auth-user-login" placeholder="Usuario" autocomplete="username">
+      <input type="password" id="auth-pin-login" placeholder="PIN" inputmode="numeric" autocomplete="current-password">
+      <button class="btn btn-primary" onclick="login()">Entrar 💙</button>
+    </div>
+
+    <div class="auth-form" id="auth-form-reg">
+      <input type="text" id="auth-user-reg" placeholder="Elige un usuario">
+      <input type="password" id="auth-pin-reg" placeholder="Crea un PIN (mín. 4 dígitos)" inputmode="numeric">
+      <button class="btn btn-primary" onclick="registrar()">Crear cuenta 🌸</button>
+    </div>
+
+    <div class="auth-msg" id="auth-msg"></div>
+    <div class="auth-hint">Tu usuario y PIN quedan guardados en este navegador. Usa el mismo usuario y PIN en otro dispositivo, y luego importa tu respaldo (⚙️ Respaldo) para tener todo igual ahí.</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none;">
+
+  <div class="app-header">
+    <h1>🐾 Paseos Esposita</h1>
+  </div>
+
+  <div class="topbar">
+    <span class="tb-user" id="topbar-user">👤 usuario</span>
+    <button onclick="cambiarFuente(-1)" title="Letra más pequeña">A-</button>
+    <button onclick="cambiarFuente(1)" title="Letra más grande">A+</button>
+    <button onclick="toggleDark()" id="btn-dark" title="Modo oscuro">🌙</button>
+    <button onclick="exportarRespaldo()" title="Descargar respaldo">⬇️</button>
+    <button onclick="document.getElementById('import-file').click()" title="Restaurar respaldo">⬆️</button>
+    <button onclick="cerrarSesion()" title="Cerrar sesión">🚪</button>
+  </div>
+  <input type="file" id="import-file" accept="application/json" style="display:none;" onchange="importarRespaldo(this.files[0])">
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('dashboard')">
+      <span class="tab-icon">📊</span>Dashboard
+    </button>
+    <button class="tab-btn" onclick="switchTab('registro')">
+      <span class="tab-icon">➕</span>Registrar
+    </button>
+    <button class="tab-btn" onclick="switchTab('paseos')">
+      <span class="tab-icon">🐕</span>Paseos
+    </button>
+    <button class="tab-btn" onclick="switchTab('horario')">
+      <span class="tab-icon">📅</span>Horario
+    </button>
+    <button class="tab-btn" onclick="switchTab('tareas')">
+      <span class="tab-icon">✅</span>Tareas
+    </button>
+    <button class="tab-btn" onclick="switchTab('historial')">
+      <span class="tab-icon">🗂️</span>Historial
+    </button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="screen-dashboard" class="screen active">
+    <div id="banner-hoy"></div>
+
+    <div class="stat-grid">
+      <div class="stat-box primary">
+        <div class="stat-val" id="dash-total">$0</div>
+        <div class="stat-lbl">Total del mes</div>
+      </div>
+      <div class="stat-box blue">
+        <div class="stat-val" id="dash-count">0</div>
+        <div class="stat-lbl">Paseos hechos</div>
+      </div>
+      <div class="stat-box mint">
+        <div class="stat-val" id="dash-perros">0</div>
+        <div class="stat-lbl">Perros activos</div>
+      </div>
+      <div class="stat-box yellow">
+        <div class="stat-val" id="dash-falta">$0</div>
+        <div class="stat-lbl">Falta para meta</div>
+      </div>
+    </div>
+
+    <div class="porcobrar-bar">
+      <span style="font-weight:700;font-size:12px;">💰 Por cobrar (pendiente)</span>
+      <span id="dash-porcobrar" style="font-weight:800;color:#d97706;">$0</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 Meta del mes</div>
+      <div class="meta-input-row">
+        <input type="number" id="meta-input" placeholder="$ Meta mensual">
+        <button class="btn btn-primary btn-sm" onclick="guardarMeta()">Guardar</button>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="prog-bar" style="width:0%"></div>
+        </div>
+        <div class="progress-label">
+          <span id="prog-pct">0%</span>
+          <span id="prog-meta">Meta: $0</span>
+        </div>
+      </div>
+      <div id="meta-msg" style="font-size:12px;color:var(--primary);font-weight:700;margin-top:8px;text-align:center;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📈 Ganancias por perro</div>
+      <div id="perros-chart">
+        <div class="empty-state"><div class="empty-icon">🐾</div><div>Aún no hay paseos</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Tendencia mensual</div>
+      <div id="tendencia-chart">
+        <div class="empty-state" style="padding:10px 0;"><div>Cierra meses para ver tu tendencia 📈</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏆 Resumen por perrito</div>
+      <div id="perros-lista">
+        <div class="empty-state"><div class="empty-icon">🐶</div><div>Agrega paseos para ver el resumen</div></div>
+      </div>
+    </div>
+
+    <button class="btn btn-danger" onclick="reiniciarMes()">🗂️ Cerrar mes y archivar</button>
+  </div>
+
+  <!-- REGISTRO -->
+  <div id="screen-registro" class="screen">
+    <div class="card">
+      <div class="card-title">🐾 Agregar nuevo paseo</div>
+      <div class="input-row">
+        <input type="text" id="reg-nombre" placeholder="Nombre del perrito 🐶" list="perros-sugeridos">
+        <datalist id="perros-sugeridos"></datalist>
+        <input type="number" id="reg-valor" placeholder="Valor del paseo 💰">
+        <input type="date" id="reg-fecha">
+        <input type="text" id="reg-nota" placeholder="Nota opcional (ej: 1 hora, parque grande)">
+        <label class="checkbox-row"><input type="checkbox" id="reg-pagado" checked> Ya está pagado</label>
+        <button class="btn btn-primary" onclick="agregarPaseo()">✨ Agregar paseo</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💌 Mensaje del día</div>
+      <div id="mensaje-dia" style="font-size:13px;color:var(--primary);font-weight:700;text-align:center;line-height:1.6;padding:8px 0;">
+        ¡Hola amor! Registra un paseo para ver tu mensaje 🌸
+      </div>
     </div>
   </div>
 
-  <script>
-    // estado inicial desde localStorage
-    let inventario = JSON.parse(localStorage.getItem('inventario_v1')) || [];
+  <!-- PASEOS -->
+  <div id="screen-paseos" class="screen">
+    <div class="card">
+      <div class="card-title">🔍 Filtrar por perrito</div>
+      <input type="text" class="filtro-input" id="filtro-nombre" placeholder="Buscar por nombre..." oninput="renderPaseosFiltro()">
+    </div>
+    <div id="lista-paseos">
+      <div class="empty-state"><div class="empty-icon">🐕</div><div>No hay paseos registrados aún</div></div>
+    </div>
+    <button class="btn btn-secondary" onclick="exportarExcel()" style="margin-top:8px;">📥 Descargar Excel</button>
+  </div>
 
-    function guardarInventario(){
-      localStorage.setItem('inventario_v1', JSON.stringify(inventario));
-    }
-
-    // renderiza lista en la UI
-    function renderLista(){
-      const lista = document.getElementById('lista');
-      lista.innerHTML = '';
-      if(inventario.length===0){
-        lista.innerHTML = '<p style="color:var(--muted);">Aún no hay productos. Agrega uno ✨</p>';
-        return;
-      }
-
-      inventario.forEach((it, idx)=>{
-        const div = document.createElement('div'); div.className='item';
-        const meta = document.createElement('div'); meta.className='meta';
-        const badge = document.createElement('div'); badge.className='badge'; badge.textContent = it.producto.toUpperCase();
-        const info = document.createElement('div'); info.className='info';
-        info.innerHTML = `<strong>${it.cantidad} × ${it.producto}</strong><small>Talla: ${it.talla || '—'} ${it.tallaPantalon? ' | 👖 '+it.tallaPantalon : ''}</small><br><small>Precio: $${it.precio.toFixed(2)}</small>`;
-        meta.appendChild(badge); meta.appendChild(info);
-
-        const tools = document.createElement('div'); tools.className='tools';
-        const del = document.createElement('button'); del.className='tool-btn'; del.textContent='🗑️ Borrar'; del.onclick = ()=>eliminarProducto(idx);
-        const plus = document.createElement('button'); plus.className='tool-btn'; plus.textContent='➕ +1'; plus.onclick = ()=>sumarUno(idx);
-        tools.appendChild(plus); tools.appendChild(del);
-
-        div.appendChild(meta); div.appendChild(tools);
-        lista.appendChild(div);
-      });
-    }
-
-    // agrega producto
-    function agregarProducto(){
-      const rawProd = document.getElementById('producto').value.trim();
-      const producto = rawProd.toLowerCase();
-      const cantidad = parseInt(document.getElementById('cantidad').value);
-      const talla = document.getElementById('talla').value.trim();
-      const precio = parseFloat(document.getElementById('precio').value);
-
-      // Validaciones para evitar agregar productos sin datos
-      if (!producto || isNaN(cantidad) || cantidad <=
+  <!-- HORARIO -->
+  <div id="screen-horario" class="screen">
+    <div class="card">
+      <div class="card-title">📅 Horario
